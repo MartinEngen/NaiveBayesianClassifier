@@ -14,7 +14,6 @@ def clean_document(document_file) -> Counter:
     document = document_file.read().lower().split("\n\n")
     document_metadata = document[0]
     cleaned_lines = list(map(replace_unwanted_characters, document[1:]))
-    # lambda x, y: x + y, a, b
     list_of_lines = map(lambda x: x.split(" "), cleaned_lines)
     flattened_list_of_lines = [val for sublist in list_of_lines for val in sublist]
 
@@ -62,6 +61,8 @@ if __name__ == '__main__':
                     p_word_given_group[group_name][countItem] += counted_words_in_file[countItem]
                 else:
                     p_word_given_group[group_name][countItem] = counted_words_in_file[countItem]
+
+            file.close()
         sum_words = sum(p_word_given_group[group_name].values())
         vocabulary_length = len(p_word_given_group[group_name])
         percent_word_given_group[group_name] = {}
