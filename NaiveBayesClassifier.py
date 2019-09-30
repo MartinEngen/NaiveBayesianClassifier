@@ -2,14 +2,13 @@ import glob
 import math
 import os
 from functools import reduce
+
+import eel as eel
+
 from Group import get_document_words, Group
 from Utils import get_subfolder_paths
 from Group import generate_groups
 from typing import NewType, Sequence
-
-def train():
-    pass
-
 
 def get_total_file_count(groups: list) -> int:
     return reduce((lambda x, group: len(group.relevant_documents) + x), groups, 0)
@@ -22,6 +21,7 @@ def find_group_sum(group: Group, document: list) -> float:
         if word in group.vocabulary_percent:
             p += math.log(group.vocabulary_percent[word])
 
+    print(p)
     return p
 
 def classify_text(all_groups: Sequence[Group], path_to_file: str) -> str:
@@ -30,17 +30,18 @@ def classify_text(all_groups: Sequence[Group], path_to_file: str) -> str:
     result = {}
     for group in all_groups:
         group_p = find_group_sum(group, document_words)
-        result[group.name] = group_p * (-1)
+        result[group.name] = group_p
 
-    #print(result)
+    # print(result)
     import operator
     verdict = max(result.items(), key=operator.itemgetter(1))[0]
 
-    print(f'verdict: {verdict}')
+    # print(f'verdict: {verdict}')
     # For each group, get the SUM
-    return ''
+    return verdict
 
 if __name__ == '__main__':
+    eel.init('web')  # GUI related
     NEWSGROUP_FOLDER = "20_newsgroups"
     all_groups = generate_groups(NEWSGROUP_FOLDER)
     total_files = get_total_file_count(all_groups)
@@ -48,12 +49,18 @@ if __name__ == '__main__':
     [group.generate_vocabulary() for group in all_groups]
     [group.generate_group_p(total_files) for group in all_groups]
 
-    # Get a file path..
     documents_by_group = get_subfolder_paths(NEWSGROUP_FOLDER)
-    #print(documents_by_group)
-
     for document_group in documents_by_group:
-        print(f'Checking {document_group} ----------------------------------------------------')
-        relevant_files = [f for f in glob.glob(document_group + "**/*", recursive=True)][-20:-1]
+        relevant_files = [f for f in glob.glob(document_group + "**/*", recursive=True)][-200:]
+
+        sum_correct = 0
+        checking_num_files = len(relevant_files)
         for f in relevant_files:
-            classify_text(all_groups, f)
+            verdict = classify_text(all_groups, f)
+
+            if verdict in document_group:
+                sum_correct += 1
+        print(f'Success Rate: {sum_correct / checking_num_files} for {document_group}')
+
+    # GUI
+    eel.start('main.html')
