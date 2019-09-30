@@ -32,15 +32,16 @@ class Group:
     def generate_vocabulary(self):
         print(f'generating vocabulary for {self.name}...')
         group_words = []
-        for document_path in self.relevant_documents[:990]:
+        for document_path in self.relevant_documents[:700]:
             words = get_document_words(document_path)
             group_words.extend(words)
 
         self.vocabulary = Counter(group_words)
         total_words = len(group_words)
+        vocab_length = len(self.vocabulary)
 
         for word in self.vocabulary:
-            word_p = self.vocabulary[word]/total_words
+            word_p = self.vocabulary[word] + 1 / (total_words + vocab_length)
             self.vocabulary_percent[word] = word_p
 
 
