@@ -29,10 +29,9 @@ class Group:
     def generate_group_p(self, total_amount_documents):
         self.group_p = self.file_count / total_amount_documents
 
-    def generate_vocabulary(self):
-        print(f'generating vocabulary for {self.name}...')
+    def generate_vocabulary(self, train_on_n_documents: int):
         group_words = []
-        for document_path in self.relevant_documents[:700]:
+        for document_path in self.relevant_documents[:train_on_n_documents]:
             words = get_document_words(document_path)
             group_words.extend(words)
 

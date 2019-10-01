@@ -21,7 +21,6 @@ def find_group_sum(group: Group, document: list) -> float:
         if word in group.vocabulary_percent:
             p += math.log(group.vocabulary_percent[word])
 
-    print(p)
     return p
 
 def classify_text(all_groups: Sequence[Group], path_to_file: str) -> str:
@@ -40,13 +39,15 @@ def classify_text(all_groups: Sequence[Group], path_to_file: str) -> str:
     # For each group, get the SUM
     return verdict
 
+
 if __name__ == '__main__':
     eel.init('web')  # GUI related
     NEWSGROUP_FOLDER = "20_newsgroups"
+
+    """
     all_groups = generate_groups(NEWSGROUP_FOLDER)
     total_files = get_total_file_count(all_groups)
-
-    [group.generate_vocabulary() for group in all_groups]
+    [group.generate_vocabulary(100) for group in all_groups]
     [group.generate_group_p(total_files) for group in all_groups]
 
     documents_by_group = get_subfolder_paths(NEWSGROUP_FOLDER)
@@ -62,5 +63,47 @@ if __name__ == '__main__':
                 sum_correct += 1
         print(f'Success Rate: {sum_correct / checking_num_files} for {document_group}')
 
-    # GUI
+    """
+
+    series = []
+    documents_by_group = get_subfolder_paths(NEWSGROUP_FOLDER)
+    for index, document_group in enumerate(documents_by_group):
+        series.append({
+            'name': document_group,
+            'data': []
+        })
+
+
+
+    print(series)
+
+    for i in range(0, 500, 100):
+        # Create new groups
+        print(i)
+        all_groups = generate_groups(NEWSGROUP_FOLDER)
+        total_files = get_total_file_count(all_groups)
+        [group.generate_vocabulary(i) for group in all_groups]
+        [group.generate_group_p(total_files) for group in all_groups]
+
+        for index, document_group in enumerate(documents_by_group):
+            relevant_files = [f for f in glob.glob(document_group + "**/*", recursive=True)][-50:]
+            sum_correct = 0
+            checking_num_files = len(relevant_files)
+            for f in relevant_files:
+                verdict = classify_text(all_groups, f)
+
+                if verdict in document_group:
+                    sum_correct += 1
+
+            series[index]['data'].append(sum_correct / checking_num_files)
+
+
+    @eel.expose
+    def get_training_result():
+        print(series)
+        return {
+            'series': series
+        }
+
+
     eel.start('main.html')
