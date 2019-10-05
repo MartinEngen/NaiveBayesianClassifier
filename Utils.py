@@ -14,6 +14,7 @@ def get_subfolder_paths(folder_relative_path: str) -> list:
 def get_group_name(group_path: str) -> str:
     return group_path.split("\\")[-1]
 
+
 def replace_unwanted_characters(line: str) -> str:
     return re.sub(
         r'([^\s\w]|_)+',
@@ -24,7 +25,6 @@ def replace_unwanted_characters(line: str) -> str:
 
 def clean_document(document_file) -> list:
     document = document_file.read().lower().split("\n\n")
-    document_metadata = document[0]
     cleaned_lines = list(map(replace_unwanted_characters, document[1:]))
     # lambda x, y: x + y, a, b
     list_of_lines = map(lambda x: x.split(" "), cleaned_lines)
