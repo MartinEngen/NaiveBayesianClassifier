@@ -33,7 +33,6 @@ def classify_text(all_groups: Sequence[Group], path_to_file: str) -> str:
 
     import operator
     verdict = max(result.items(), key=operator.itemgetter(1))[0]
-    print(verdict)
     return verdict
 
 
