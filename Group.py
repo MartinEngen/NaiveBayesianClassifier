@@ -31,26 +31,27 @@ class Group:
         self.file_count = len(relevant_files)
         return relevant_files
 
-    def generate_group_p(self, total_amount_documents, vocab):
-
-        # All words:
+    def generate_group_p(self, total_amount_documents: int, vocab: list):
         vocab_length = len(vocab.words)
         words_length = len(self.words)
 
+        # Add all vocab words to the category
         for word in vocab.words:
             self.vocabulary_percent[word] = 1.0
 
+        # Sum up amount of times the word occurred
         for word in self.words:
             if word in vocab.words:
                 self.vocabulary_percent[word] += 1.0
+
         for word in vocab.words:
-            self.vocabulary_percent[word] /= words_length + vocab_length
+            self.vocabulary_percent[word] /= (words_length + vocab_length)
 
         self.group_p = self.file_count / total_amount_documents
 
-    def generate_vocabulary(self, train_from_document: int, train_on_n_documents: int, vocab: Vocabulary):
+    def generate_vocabulary(self, from_document: int, to_document: int, vocab: Vocabulary):
         group_words = []
-        for document_path in self.relevant_documents[train_from_document:train_on_n_documents]:
+        for document_path in self.relevant_documents[from_document:to_document]:
             words = get_document_words(document_path)
             group_words.extend(words)
 
@@ -65,10 +66,10 @@ def get_document_words(document_path: str) -> list:
     document_cleaned_relevant_lines: iter = map(replace_unwanted_characters, document_by_lines[1:])
     words_in_per_line: iter = map(lambda x: x.split(" "), document_cleaned_relevant_lines)
     all_words: list = [val for sublist in words_in_per_line for val in sublist]
+    words_without_empty = list(filter(None, all_words))
 
-    # Close the document
     opened_document.close()
-    return all_words
+    return words_without_empty
 
 
 def generate_groups(newsgroup_folder: str) -> list:

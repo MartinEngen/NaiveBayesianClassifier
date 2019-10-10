@@ -1,9 +1,11 @@
 import glob
 import math
 import os
+import random
 from functools import reduce
 import numpy as np
 import eel as eel
+import operator
 
 from Group import get_document_words, Group, Vocabulary, generate_unique_vocab
 from Utils import get_subfolder_paths, get_group_name
@@ -31,7 +33,6 @@ def classify_text(all_groups: Sequence[Group], path_to_file: str) -> str:
         group_p = find_group_sum(group, document_words)
         result[group.name] = group_p
 
-    import operator
     verdict = max(result.items(), key=operator.itemgetter(1))[0]
     return verdict
 
@@ -40,7 +41,8 @@ def check_group_performance(all_groups, documents_by_group):
     series_result = []
 
     for index, document_group in enumerate(documents_by_group):
-        relevant_files = [f for f in glob.glob(document_group + "**/*", recursive=True)][-100:]
+
+        relevant_files = [f for f in glob.glob(document_group + "**/*", recursive=True)][-50:]
         sum_correct = 0
         checking_num_files = len(relevant_files)
         for f in relevant_files:
@@ -52,7 +54,7 @@ def check_group_performance(all_groups, documents_by_group):
         print(f'{document_group} - success rate: {sum_correct / checking_num_files}')
         series_result.append(sum_correct / checking_num_files)
     mean_result = np.mean(series_result)
-    print(f'Total Result: {np.mean(mean_result)}')
+    print(f'Mean Result: {np.mean(mean_result)}')
 
     return {
         'mean_result': mean_result,
@@ -84,7 +86,7 @@ if __name__ == '__main__':
             'data': []
         })
 
-    for i in range(0, 1000, 100):
+    for i in range(0, 900, 100):
         print(f'checking range {i} - {i + 100}')
 
         [group.generate_vocabulary(i, i + 100, vocab) for group in all_groups]
@@ -96,8 +98,6 @@ if __name__ == '__main__':
             category_result[i]['data'].append(result['series_result'][i])
 
         total_result['data'].append(round(result['mean_result'], 2))
-
-    print(total_result)
 
     chart_data = {
         'category_result': category_result,

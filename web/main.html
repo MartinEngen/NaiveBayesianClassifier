@@ -58,7 +58,7 @@
           <nav class="mdl-navigation">
                 <!-- BUTTONS -->
               <div class="mdl-cell mdl-cell--12-col">
-                <!-- Colored raised button -->d
+                <!-- Colored raised button -->
                 <button onclick="getResult()" class="mdl-button mdl-js-button mdl-button--raised">
                     Update Graph
                 </button><!-- Colored raised button -->
@@ -70,10 +70,10 @@
       <main class="demo-main mdl-layout__content">
         <div class="demo-container mdl-grid">
               <div class="mdl-cell mdl-cell--12-col">
-                <div id="category_result" style="height: 400px; min-width: 310px; max-width: 1200px; margin: 0 auto"></div>
+                <div id="total_result" style="height: 700px; min-width: 310px; max-width: 1200px; margin: 0 auto"></div>
               </div>
               <div class="mdl-cell mdl-cell--12-col">
-                <div id="total_result" style="height: 400px; min-width: 310px; max-width: 1200px; margin: 0 auto"></div>
+                <div id="category_result" style="height: 700px; min-width: 310px; max-width: 1200px; margin: 0 auto"></div>
               </div>
         </div>
       </main>
@@ -106,7 +106,8 @@
                 label: {
                     connectorAllowed: false
                 },
-                pointStart: 0,
+                pointStart: 100,
+                pointInterval: 100,
                 connectNulls: true
             }
         },
@@ -114,6 +115,16 @@
             type: 'line',
             zoomType: 'x'
         },
+      xAxis: {
+        title: {
+            enabled: true,
+            text: 'Amount of <b>files</b> trained with',
+            style: {
+                fontWeight: 'normal'
+            }
+        }
+      },
+
         series: [],
 
         responsive: {
@@ -154,7 +165,8 @@
                 label: {
                     connectorAllowed: false
                 },
-                pointStart: 0,
+                pointStart: 100,
+                pointInterval: 100,
                 connectNulls: true
             }
         },
@@ -162,6 +174,15 @@
             type: 'line',
             zoomType: 'x'
         },
+        xAxis: {
+        title: {
+            enabled: true,
+            text: 'Amount of <b>files</b> trained with',
+            style: {
+                fontWeight: 'normal'
+            }
+        }
+      },
         series: [],
 
         responsive: {
